@@ -20,6 +20,12 @@ function App() {
   });
   const [showHistory, setShowHistory] = useState(false);
   const [visibleHistoryDeletes, setVisibleHistoryDeletes] = useState({});
+  const [dailyLogs, setDailyLogs] = useState(() => {
+    const saved = localStorage.getItem("daily-logs");
+    return saved ? JSON.parse(saved) : [];
+  });
+  const [showLogs, setShowLogs] = useState(false);
+  const [visibleLogDeletes, setVisibleLogDeletes] = useState({});
 
   useEffect(() => {
     const savedGoal = localStorage.getItem("goal");
@@ -78,13 +84,33 @@ function App() {
   }
   function handleReset() {
     const confirmReset = window.confirm(
-      "This will clear everything including your goal. Proceed?"
+      "This will clear everything and log your day. Proceed?"
     );
     if (!confirmReset) return;
+
+    if (items.length > 0) {
+      const now = new Date();
+      //const options = { weekday: "long", month: "short", day: "numeric" };
+      const date = `${now.toLocaleDateString("en-US", {
+        weekday: "long",
+      })}, ${now.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+      })}`;
+
+      const todayLog = {
+        date: date, // ✅ correct here
+        total: total,
+      };
+      const updatedLogs = [...dailyLogs, todayLog];
+      setDailyLogs(updatedLogs);
+      localStorage.setItem("daily-logs", JSON.stringify(updatedLogs));
+    }
 
     setItems([]);
     setGoal("");
     setTempGoal("");
+    //setEditingGoal(true);
 
     localStorage.removeItem("items");
     localStorage.removeItem("goal");
@@ -119,7 +145,7 @@ function App() {
         <div
           style={{
             display: "flex",
-            justifyContent: "center",
+            justifyContent: "space-between",
             alignItems: "flex-start",
             minHeight: "100vh",
             padding: "1rem 2rem",
@@ -431,6 +457,7 @@ function App() {
                 )}
               </div>
             )}
+
             {items.length > 0 && (
               <button
                 onClick={handleReset}
@@ -449,6 +476,90 @@ function App() {
                 Reset Everything
               </button>
             )}
+            {/* ⬅️ Sidebar for Daily Logs */}
+            <div
+              style={{
+                width: "280px",
+                backgroundColor: "#fff",
+                padding: "1rem",
+                marginRight: "2rem",
+                borderRadius: "8px",
+                boxShadow: "0 0 10px rgba(0,0,0,0.05)",
+              }}
+            >
+              <div
+                onClick={() => setShowLogs(!showLogs)}
+                style={{
+                  position: "absolute",
+                  top: "2rem",
+                  left: "0.5rem",
+                  padding: "0.2rem 0.4rem",
+                  backgroundColor: "#ccc",
+                  borderRadius: "3px",
+                  fontSize: "10px",
+                  color: "#222",
+                  cursor: "pointer",
+                  zIndex: 1000,
+                }}
+                title="Show/Hide Daily Logs"
+              >
+                Daily Progress
+              </div>
+
+              {showLogs && (
+                <ul style={{ listStyle: "none", padding: 0 }}>
+                  {dailyLogs.map((log, index) => (
+                    <li
+                      key={index}
+                      onDoubleClick={() =>
+                        setVisibleLogDeletes((prev) => ({
+                          ...prev,
+                          [index]: !prev[index],
+                        }))
+                      }
+                      style={{
+                        backgroundColor: "#fff",
+                        padding: "0.5rem 0.75rem",
+                        marginBottom: "0.5rem",
+                        border: "1px solid #ccc",
+                        borderRadius: "5px",
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                      }}
+                    >
+                      <span>
+                        📅 {log.date} — 🔥 {log.total} kcal
+                      </span>
+                      {visibleLogDeletes[index] && (
+                        <button
+                          onClick={() => {
+                            const updated = dailyLogs.filter(
+                              (_, i) => i !== index
+                            );
+                            setDailyLogs(updated);
+                            localStorage.setItem(
+                              "daily-logs",
+                              JSON.stringify(updated)
+                            );
+                          }}
+                          style={{
+                            backgroundColor: "transparent",
+                            color: "red",
+                            border: "none",
+                            fontSize: "18px",
+                            fontWeight: "bold",
+                            cursor: "pointer",
+                          }}
+                        >
+                          ×
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
         </div>
       </div>
