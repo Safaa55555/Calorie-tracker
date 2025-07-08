@@ -205,22 +205,28 @@ function App() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit}>
+            <form
+              onSubmit={handleSubmit}
+              style={{
+                display: "flex",
+                flexWrap: "wrap", // allows wrapping on small screens
+                gap: "0.5rem",
+                justifyContent: "center",
+              }}
+            >
               <input
                 type="text"
                 placeholder="Food (e.g. 2 apples)"
                 value={food}
                 onChange={(e) => setFood(e.target.value)}
                 style={{
+                  flex: "1 1 150px", // responsive sizing
+                  minWidth: "150px",
                   padding: "0.4rem 0.8rem",
-                  marginRight: "0.5rem",
                   border: "1px solid #ccd6dd",
                   borderRadius: "6px",
                   backgroundColor: "#ffffff",
-                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
-                  color: "#2C3E50",
                   fontSize: "14px",
-                  outline: "none",
                 }}
               />
               <input
@@ -229,34 +235,26 @@ function App() {
                 value={calories}
                 onChange={(e) => setCalories(e.target.value)}
                 style={{
+                  flex: "1 1 100px",
+                  minWidth: "100px",
                   padding: "0.4rem 0.8rem",
-                  marginRight: "0.5rem",
                   border: "1px solid #ccd6dd",
                   borderRadius: "6px",
                   backgroundColor: "#ffffff",
-                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
-                  color: "#2C3E50",
                   fontSize: "14px",
-                  outline: "none",
                 }}
               />
               <button
                 type="submit"
                 style={{
-                  backgroundColor: "#e8ecf1", // ✅ light gray-blue
+                  padding: "0.4rem 0.8rem",
+                  backgroundColor: "#e8ecf1",
                   color: "#2C3E50",
-                  border: "1px solid #d3dce6", // soft border
-                  padding: "0.4rem 0.8rem", // ✅ smaller, matches input height
+                  border: "1px solid #d3dce6",
                   borderRadius: "5px",
-                  cursor: "pointer",
                   fontWeight: "500",
-                  boxShadow: "0 1px 2px rgba(0, 0, 0, 0.05)",
-                  transition: "all 0.2s ease-in-out",
+                  cursor: "pointer",
                 }}
-                onMouseOver={(e) =>
-                  (e.target.style.backgroundColor = "#dce3eb")
-                }
-                onMouseOut={(e) => (e.target.style.backgroundColor = "#e8ecf1")}
               >
                 Add
               </button>
